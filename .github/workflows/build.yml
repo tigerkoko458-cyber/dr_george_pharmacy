@@ -11,14 +11,18 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+      - name: Extract project
+        run: unzip -o project.zip -d app
+      - name: Fix intl version
+        run: sed -i "s/intl: \^0.19.0/intl: ^0.20.2/" app/pubspec.yaml
       - name: Generate platform folders
-        run: flutter create . --project-name dr_george_pharmacy --org com.drgeorge
+        run: cd app && flutter create . --project-name dr_george_pharmacy --org com.drgeorge
       - name: Get dependencies
-        run: flutter pub get
+        run: cd app && flutter pub get
       - name: Build APK
-        run: flutter build apk --release
+        run: cd app && flutter build apk --release
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: dr-george-pharmacy-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
